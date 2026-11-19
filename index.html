@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Amma Restaurant - Poster Studio</title>
+  
+  <!-- Multiple Malayalam Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@500;700;800&family=Chilanka&family=Gayathri:wght@400;700&family=Manjari:wght@400;700&family=Noto+Sans+Malayalam:wght@400;600;800&family=Noto+Serif+Malayalam:wght@700;900&display=swap" rel="stylesheet">
+  
+  <!-- html-to-image library for High-Res PNG Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+  <style>
+    :root {
+      --brand-gold: #FFC107;
+      --brand-red: #D32F2F;
+      --brand-dark: #140D0A;
+      --brand-cream: #FFF8E7;
+      --headline-font: 'Noto Serif Malayalam', serif;
+      --body-font: 'Noto Sans Malayalam', sans-serif;
+      --ui-bg: #18181b;
+      --ui-panel: #27272a;
+      --ui-border: #3f3f46;
+      --preview-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--ui-bg);
+      color: #f4f4f5;
+      font-family: 'Noto Sans Malayalam', system-ui, sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Left / Top Control Panel */
+    .controls {
+      width: 410px;
+      background-color: var(--ui-panel);
+      border-right: 1px solid var(--ui-border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .controls h2 {
+      font-size: 18px;
+      color: var(--brand-gold);
+      border-bottom: 1px solid var(--ui-border);
+      padding-bottom: 10px;
+    }
+
+    .restyle-bar {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.14), rgba(211, 47, 47, 0.14));
+      border: 1px solid rgba(255, 193, 7, 0.45);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-restyle {
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      color: #fff;
+      border: none;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 800;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25);
+      transition: transform 0.12s ease, filter 0.2s ease;
+    }
+
+    .btn-restyle:active {
+      transform: scale(0.98);
+    }
+
+    .style-badge {
+      font-size: 12px;
+      color: #fde68a;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px 10px;
+      border-radius: 6px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #d4d4d8;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      background-color: #18181b;
+      border: 1px solid var(--ui-border);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: 'Noto Sans Malayalam', sans-serif;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    input[type="file"] {
+      background-color: #18181b;
+      border: 1px dashed var(--brand-gold);
+      padding: 12px;
+      border-radius: 8px;
+      color: #d4d4d8;
+      cursor: pointer;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    /* Image Adjust Box */
+    .adjust-box {
+      background-color: #18181b;
+      border: 1px solid var(--ui-border);
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .adjust-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--brand-gold);
+    }
+
+    .btn-reset {
+      background: #3f3f46;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 24px;
+      accent-color: var(--brand-gold);
+      cursor: pointer;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 64px;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #a1a1aa;
+      line-height: 1.4;
+    }
+
+    .btn-export {
+      background-color: var(--brand-gold);
+      color: #140D0A;
+      border: none;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 4px;
+      width: 100%;
+      transition: transform 0.1s, filter 0.2s;
+    }
+
+    .btn-export:active {
+      transform: scale(0.98);
+    }
+
+    /* Right Preview Workspace */
+    .workspace {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 28px;
+      overflow: hidden;
+      background-image: radial-gradient(#3f3f46 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Wrapper that reserves exact scaled layout space */
+    .scale-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Base Poster Canvas (Unscaled internal dimensions for crisp export) */
+    .poster-canvas {
+      position: relative;
+      background-color: var(--brand-dark);
+      font-family: var(--body-font);
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 6px solid var(--brand-gold);
+      transform: scale(var(--preview-scale));
+      transform-origin: center center;
+      transition: border-color 0.25s ease, background-color 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    /* FORMAT 1: Facebook / Instagram Post (4:5 -> 540x675, exports at 2x = 1080x1350) */
+    .poster-canvas.format-post {
+      width: 540px;
+      height: 675px;
+    }
+
+    /* FORMAT 2: Instagram Story (9:16 -> 450x800, exports at 2.4x = 1080x1920) */
+    .poster-canvas.format-story {
+      width: 450px;
+      height: 800px;
+    }
+    .poster-canvas.format-story .brand-header {
+      padding-top: 48px;
+    }
+    .poster-canvas.format-story .poster-content {
+      padding-bottom: 48px;
+    }
+    .poster-canvas.format-story .main-headline {
+      font-size: 34px;
+    }
+
+    /* FORMAT 3: Facebook Cover Photo (16:9 -> 820x462, exports at 2x = 1640x924) */
+    .poster-canvas.format-cover {
+      width: 820px;
+      height: 462px;
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .poster-canvas.format-cover .overlay {
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--brand-dark) 96%, transparent) 0%,
+        color-mix(in srgb, var(--brand-dark) 84%, transparent) 48%,
+        color-mix(in srgb, var(--brand-dark) 16%, transparent) 100%
+      );
+    }
+    .poster-canvas.format-cover .brand-header {
+      position: absolute;
+      top: 22px;
+      left: 28px;
+      padding: 0;
+      text-align: left;
+    }
+    .poster-canvas.format-cover .brand-badge {
+      padding: 6px 18px;
+    }
+    .poster-canvas.format-cover .brand-title {
+      font-size: 20px;
+    }
+    .poster-canvas.format-cover .poster-content {
+      width: 58%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      text-align: left;
+      padding: 24px 28px;
+    }
+    .poster-canvas.format-cover .tag-pill {
+      align-self: flex-start;
+    }
+    .poster-canvas.format-cover .main-headline {
+      font-size: 32px;
+    }
+    .poster-canvas.format-cover .sub-caption {
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    /* Dish Image with Zoom & Pan support */
+    .dish-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: translate(0px, 0px) scale(1);
+      transform-origin: center center;
+      z-index: 1;
+      user-select: none;
+    }
+
+    /* Gradient Overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--brand-dark) 90%, transparent) 0%,
+        color-mix(in srgb, var(--brand-dark) 15%, transparent) 35%,
+        color-mix(in srgb, var(--brand-dark) 25%, transparent) 55%,
+        color-mix(in srgb, var(--brand-dark) 96%, transparent) 85%,
+        var(--brand-dark) 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+      transition: background 0.25s ease;
+    }
+
+    /* Brand Header */
+    .brand-header {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      padding: 24px 20px 10px;
+      pointer-events: none;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: color-mix(in srgb, var(--brand-dark) 82%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--brand-gold) 60%, transparent);
+      padding: 8px 24px;
+      border-radius: 50px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .brand-title {
+      font-family: var(--headline-font);
+      font-weight: 900;
+      font-size: 25px;
+      color: var(--brand-gold);
+      line-height: 1.25;
+      transition: color 0.25s ease;
+    }
+
+    .brand-subtitle {
+      font-family: var(--body-font);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brand-cream);
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+      transition: color 0.25s ease;
+    }
+
+    /* Content Area */
+    .poster-content {
+      position: relative;
+      z-index: 3;
+      padding: 20px 28px 22px;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      background-color: var(--brand-red);
+      color: #fff;
+      font-family: var(--body-font);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      transition: background-color 0.25s ease;
+    }
+
+    .main-headline {
+      font-family: var(--headline-font);
+      font-weight: 900;
+      font-size: 38px;
+      line-height: 1.32;
+      color: #FFFFFF;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+      margin-bottom: 10px;
+      transition: color 0.25s ease;
+    }
+
+    .main-headline span {
+      color: var(--brand-gold);
+      transition: color 0.25s ease;
+    }
+
+    .sub-caption {
+      font-family: var(--body-font);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--brand-cream);
+      line-height: 1.55;
+      margin-bottom: 18px;
+      transition: color 0.25s ease;
+    }
+
+    .poster-footer {
+      border-top: 1px solid color-mix(in srgb, var(--brand-gold) 35%, transparent);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--body-font);
+      font-size: 13px;
+      color: var(--brand-gold);
+      font-weight: 600;
+      gap: 10px;
+      transition: color 0.25s ease, border-color 0.25s ease;
+    }
+
+    /* MOBILE LAYOUT OPTIMIZATION */
+    @media (max-width: 960px) {
+      body {
+        flex-direction: column-reverse;
+        min-height: 100dvh;
+      }
+
+      .workspace {
+        width: 100%;
+        padding: 16px 12px;
+        min-height: 280px;
+      }
+
+      .controls {
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        overflow-y: visible;
+        border-right: none;
+        border-top: 1px solid var(--ui-border);
+        padding: 16px 14px 28px;
+        gap: 12px;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-export {
+        position: sticky;
+        bottom: 10px;
+        z-index: 20;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CONTROLS PANEL -->
+  <aside class="controls">
+    <h2>അമ്മ റെസ്റ്റോറന്റ് - Poster Studio</h2>
+
+    <!-- RESTYLE & VARIATION CONTROLS -->
+    <div class="restyle-bar">
+      <button type="button" class="btn-restyle" onclick="restylePoster()">
+        🎲 Restyle (New Color & Font)
+      </button>
+      <div class="style-badge" id="activeStyleBadge">
+        Theme: Royal Gold & Crimson • Font: Noto Serif + Sans
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Color Palette</label>
+          <select id="paletteSelect" onchange="applyPaletteById(this.value)"></select>
+        </div>
+
+        <div class="form-group">
+          <label>Malayalam Font</label>
+          <select id="fontSelect" onchange="applyFontById(this.value)"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>1. പോസ്റ്റർ സൈസ് (Resolution)</label>
+      <select id="formatSelect" onchange="changeFormat()">
+        <option value="format-post">Facebook / Instagram Post (4:5 - 1080×1350)</option>
+        <option value="format-story">Instagram / WhatsApp Story (9:16 - 1080×1920)</option>
+        <option value="format-cover">Facebook Cover Photo (16:9 - 1640×924)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>2. ഭക്ഷണത്തിന്റെ ഫോട്ടോ (Upload Photo)</label>
+      <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)" />
+    </div>
+
+    <!-- IMAGE CROP / ZOOM / ADJUST CONTROLS -->
+    <div class="adjust-box">
+      <div class="adjust-header">
+        <span>🖼️ ഫോട്ടോ ക്രമീകരിക്കുക (Crop & Zoom)</span>
+        <button type="button" class="btn-reset" onclick="resetImageTransform()">Reset</button>
+      </div>
+
+      <div class="form-group">
+        <label>Zoom: <span id="zoomVal">100%</span></label>
+        <input type="range" id="zoomSlider" min="100" max="250" value="100" oninput="updateImageTransform()" />
+      </div>
+
+      <div class="form-group">
+        <label>ഇടത് / വലത് (Horizontal): <span id="posXVal">0px</span></label>
+        <input type="range" id="posXSlider" min="-250" max="250" value="0" oninput="updateImageTransform()" />
+      </div>
+
+      <div class="form-group">
+        <label>മുകളിൽ / താഴെ (Vertical): <span id="posYVal">0px</span></label>
+        <input type="range" id="posYSlider" min="-250" max="250" value="0" oninput="updateImageTransform()" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>3. ടാഗ് (Badge Text)</label>
+      <input type="text" id="tagInput" value="ഇന്നത്തെ സ്പെഷ്യൽ" oninput="updateText()" />
+    </div>
+
+    <div class="form-group">
+      <label>4. മെയിൻ ക്യാപ്ഷൻ (Headline)</label>
+      <textarea id="headlineInput" oninput="updateText()">ഉച്ച ഊണിനൊപ്പം<br><span>രണ്ട് ചാള കൂടി</span> ആയാലോ?</textarea>
+      <span class="hint">ഹൈലൈറ്റ് ചെയ്യേണ്ട വാക്കുകൾ &lt;span&gt;...&lt;/span&gt; ഉള്ളിൽ ഇടുക. പുതിയ വരിക്ക് &lt;br&gt; ഉപയോഗിക്കുക.</span>
+    </div>
+
+    <div class="form-group">
+      <label>5. ചെറിയ വിവരണം (Sub-caption)</label>
+      <textarea id="subInput" oninput="updateText()">നല്ല ചൂട് നാടൻ ഊണിനൊപ്പം മൊരിഞ്ഞ ചാള വറുത്തതും കൂട്ടി ഒരു പിടി പിടിക്കാം!</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>6. ഫോൺ നമ്പർ (Phone)</label>
+      <input type="text" id="phoneInput" value="📞 +91 9747197400" oninput="updateText()" />
+    </div>
+
+    <div class="form-group">
+      <label>7. സ്ഥലം (Location)</label>
+      <input type="text" id="locationInput" value="📍 അമ്മ റെസ്റ്റോറന്റ്, കടമ്പഴിപ്പുറം" oninput="updateText()" />
+    </div>
+
+    <button class="btn-export" id="exportBtn" onclick="exportPNG()">⬇️ Export as PNG (High Quality)</button>
+  </aside>
+
+  <!-- PREVIEW WORKSPACE -->
+  <main class="workspace" id="workspace">
+    <div class="scale-wrapper" id="scaleWrapper">
+      <div class="poster-canvas format-post" id="poster">
+        <img id="dishPreview" src="218711.jpg" alt="Dish Photo" class="dish-image" />
+        <div class="overlay"></div>
+
+        <header class="brand-header">
+          <div class="brand-badge">
+            <div class="brand-title">അമ്മ റെസ്റ്റോറന്റ്</div>
+            <div class="brand-subtitle">തനി നാടൻ രുചിക്കൂട്ട്</div>
+          </div>
+        </header>
+
+        <main class="poster-content">
+          <div class="tag-pill" id="tagPreview">ഇന്നത്തെ സ്പെഷ്യൽ</div>
+          <h1 class="main-headline" id="headlinePreview">
+            ഉച്ച ഊണിനൊപ്പം<br><span>രണ്ട് ചാള കൂടി</span> ആയാലോ?
+          </h1>
+          <p class="sub-caption" id="subPreview">
+            നല്ല ചൂട് നാടൻ ഊണിനൊപ്പം മൊരിഞ്ഞ ചാള വറുത്തതും കൂട്ടി ഒരു പിടി പിടിക്കാം!
+          </p>
+          <footer class="poster-footer">
+            <span id="phonePreview">📞 +91 9747197400</span>
+            <span id="locationPreview">📍 അമ്മ റെസ്റ്റോറന്റ്, കടമ്പഴിപ്പുറം</span>
+          </footer>
+        </main>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const FORMAT_DIMENSIONS = {
+      'format-post':  { width: 540, height: 675, pixelRatio: 2 },
+      'format-story': { width: 450, height: 800, pixelRatio: 2.4 },
+      'format-cover': { width: 820, height: 462, pixelRatio: 2 }
+    };
+
+    const COLOR_PALETTES = [
+      { id: 'royal-gold', name: 'Royal Gold & Crimson', gold: '#FFC107', red: '#D32F2F', dark: '#140D0A', cream: '#FFF8E7' },
+      { id: 'banana-leaf', name: 'Banana Leaf & Turmeric', gold: '#FACC15', red: '#15803D', dark: '#091810', cream: '#F0FDF4' },
+      { id: 'chilli-spice', name: 'Chilli Spice & Warm Cream', gold: '#FB923C', red: '#B91C1C', dark: '#160B09', cream: '#FFF7ED' },
+      { id: 'malabar-saffron', name: 'Malabar Saffron & Slate', gold: '#F59E0B', red: '#EA580C', dark: '#111317', cream: '#FEF3C7' },
+      { id: 'tamarind-amber', name: 'Tamarind Plum & Amber', gold: '#FBBF24', red: '#9D174D', dark: '#160A10', cream: '#FDF2F8' },
+      { id: 'coastal-teal', name: 'Coastal Teal & Gold', gold: '#FCD34D', red: '#0F766E', dark: '#081618', cream: '#F0FDFA' },
+      { id: 'jaggery-honey', name: 'Jaggery & Honey Gold', gold: '#FBBF24', red: '#92400E', dark: '#170E07', cream: '#FFFBEB' },
+      { id: 'vermilion-ivory', name: 'Festive Red & Ivory', gold: '#FDE047', red: '#DC2626', dark: '#120C0C', cream: '#FFFFF0' }
+    ];
+
+    const FONT_SETS = [
+      { id: 'noto-serif-sans', name: 'Noto Serif + Sans', headline: "'Noto Serif Malayalam', serif", body: "'Noto Sans Malayalam', sans-serif" },
+      { id: 'anek-malayalam', name: 'Anek Malayalam Bold', headline: "'Anek Malayalam', sans-serif", body: "'Noto Sans Malayalam', sans-serif" },
+      { id: 'manjari-clean', name: 'Manjari + Noto Sans', headline: "'Manjari', sans-serif", body: "'Noto Sans Malayalam', sans-serif" },
+      { id: 'gayathri-bold', name: 'Gayathri + Manjari', headline: "'Gayathri', sans-serif", body: "'Manjari', sans-serif" },
+      { id: 'chilanka-playful', name: 'Chilanka + Noto Sans', headline: "'Chilanka', cursive", body: "'Noto Sans Malayalam', sans-serif" },
+      { id: 'noto-sans-modern', name: 'Noto Sans Modern', headline: "'Noto Sans Malayalam', sans-serif", body: "'Anek Malayalam', sans-serif" }
+    ];
+
+    let currentPaletteIndex = 0;
+    let currentFontIndex = 0;
+
+    function fitPosterToViewport() {
+      const format = document.getElementById('formatSelect').value;
+      const dims = FORMAT_DIMENSIONS[format] || FORMAT_DIMENSIONS['format-post'];
+      const workspace = document.getElementById('workspace');
+      const wrapper = document.getElementById('scaleWrapper');
+
+      const availW = Math.max(240, workspace.clientWidth - 28);
+      const isMobile = window.innerWidth <= 960;
+      const availH = isMobile
+        ? Math.max(240, Math.min(window.innerHeight * 0.52, 520))
+        : Math.max(300, workspace.clientHeight - 56);
+
+      const scale = Math.min(1, availW / dims.width, availH / dims.height);
+      document.documentElement.style.setProperty('--preview-scale', scale.toFixed(4));
+
+      wrapper.style.width = Math.round(dims.width * scale) + 'px';
+      wrapper.style.height = Math.round(dims.height * scale) + 'px';
+    }
+
+    function initStyleOptions() {
+      const paletteSelect = document.getElementById('paletteSelect');
+      const fontSelect = document.getElementById('fontSelect');
+
+      COLOR_PALETTES.forEach((p, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = p.name;
+        paletteSelect.appendChild(opt);
+      });
+
+      FONT_SETS.forEach((f, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = f.name;
+        fontSelect.appendChild(opt);
+      });
+
+      applyStyle(0, 0);
+      fitPosterToViewport();
+    }
+
+    function applyStyle(paletteIdx, fontIdx) {
+      currentPaletteIndex = paletteIdx;
+      currentFontIndex = fontIdx;
+
+      const palette = COLOR_PALETTES[paletteIdx];
+      const font = FONT_SETS[fontIdx];
+      const root = document.documentElement;
+
+      root.style.setProperty('--brand-gold', palette.gold);
+      root.style.setProperty('--brand-red', palette.red);
+      root.style.setProperty('--brand-dark', palette.dark);
+      root.style.setProperty('--brand-cream', palette.cream);
+      root.style.setProperty('--headline-font', font.headline);
+      root.style.setProperty('--body-font', font.body);
+
+      document.getElementById('paletteSelect').value = paletteIdx;
+      document.getElementById('fontSelect').value = fontIdx;
+      document.getElementById('activeStyleBadge').textContent =
+        `Theme: ${palette.name} • Font: ${font.name}`;
+    }
+
+    function applyPaletteById(idx) {
+      applyStyle(Number(idx), currentFontIndex);
+    }
+
+    function applyFontById(idx) {
+      applyStyle(currentPaletteIndex, Number(idx));
+    }
+
+    function restylePoster() {
+      const nextPalette = (currentPaletteIndex + 1 + Math.floor(Math.random() * (COLOR_PALETTES.length - 1))) % COLOR_PALETTES.length;
+      const nextFont = (currentFontIndex + 1 + Math.floor(Math.random() * (FONT_SETS.length - 1))) % FONT_SETS.length;
+      applyStyle(nextPalette, nextFont);
+    }
+
+    function changeFormat() {
+      const poster = document.getElementById('poster');
+      const selected = document.getElementById('formatSelect').value;
+      poster.className = 'poster-canvas ' + selected;
+      fitPosterToViewport();
+    }
+
+    function loadImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('dishPreview').src = e.target.result;
+        resetImageTransform();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateImageTransform() {
+      const zoom = document.getElementById('zoomSlider').value;
+      const posX = document.getElementById('posXSlider').value;
+      const posY = document.getElementById('posYSlider').value;
+
+      document.getElementById('zoomVal').innerText = zoom + '%';
+      document.getElementById('posXVal').innerText = posX + 'px';
+      document.getElementById('posYVal').innerText = posY + 'px';
+
+      const scale = zoom / 100;
+      const img = document.getElementById('dishPreview');
+      img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+    }
+
+    function resetImageTransform() {
+      document.getElementById('zoomSlider').value = 100;
+      document.getElementById('posXSlider').value = 0;
+      document.getElementById('posYSlider').value = 0;
+      updateImageTransform();
+    }
+
+    function updateText() {
+      document.getElementById('tagPreview').innerText = document.getElementById('tagInput').value;
+      document.getElementById('headlinePreview').innerHTML = document.getElementById('headlineInput').value;
+      document.getElementById('subPreview').innerText = document.getElementById('subInput').value;
+      document.getElementById('phonePreview').innerText = document.getElementById('phoneInput').value;
+      document.getElementById('locationPreview').innerText = document.getElementById('locationInput').value;
+    }
+
+    async function exportPNG() {
+      const poster = document.getElementById('poster');
+      const btn = document.getElementById('exportBtn');
+      const format = document.getElementById('formatSelect').value;
+      const dims = FORMAT_DIMENSIONS[format] || FORMAT_DIMENSIONS['format-post'];
+
+      btn.innerText = 'Exporting...';
+      btn.disabled = true;
+
+      // Temporarily render at 1:1 scale for crisp full-resolution PNG export
+      const prevScale = getComputedStyle(document.documentElement).getPropertyValue('--preview-scale');
+      document.documentElement.style.setProperty('--preview-scale', '1');
+
+      try {
+        const dataUrl = await htmlToImage.toPng(poster, {
+          width: dims.width,
+          height: dims.height,
+          pixelRatio: dims.pixelRatio,
+          cacheBust: true
+        });
+
+        const link = document.createElement('a');
+        link.download = `amma-restaurant-${format}-${Date.now()}.png`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        alert('Export ചെയ്യുന്നതിനിടെ പിശക് സംഭവിച്ചു. ലോക്കൽ ഫോട്ടോ അപ്‌ലോഡ് ചെയ്ത് വീണ്ടും ശ്രമിക്കുക.');
+        console.error(err);
+      } finally {
+        document.documentElement.style.setProperty('--preview-scale', prevScale.trim() || '1');
+        fitPosterToViewport();
+        btn.innerText = '⬇️ Export as PNG (High Quality)';
+        btn.disabled = false;
+      }
+    }
+
+    window.addEventListener('resize', fitPosterToViewport);
+    initStyleOptions();
+  </script>
+
+</body>
+</html>
